@@ -6,7 +6,7 @@ window.onload = function() {
     let delay = 120;
     let snakee;
     let applee;
-    let widthinBlocks = canvasWidth / blockSize;
+    let widthInBlocks = canvasWidth / blockSize;
     let heightInBlocks = canvasHeight / blockSize;
 
     init();
@@ -31,7 +31,11 @@ window.onload = function() {
         } else {
 
             if(snakee.isEatingApple(applee)) {
-                // Snake eat the apple
+                snakee.ateApple = true;
+                do {
+                    applee.setNewPosition();
+                }
+                while(applee.isOnSnake(snakee))
             }
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);// Rectangle : 100 on 50, placed at 30 px from top and 30 px from the left
             snakee.draw();
@@ -51,6 +55,7 @@ window.onload = function() {
     function Snake(body, direction) {
         this.body = body;
         this.direction = direction;
+        this.ateApple = false;
         this.draw = function() {
             ctx.save();
             ctx.fillStyle = "#ff0000";
@@ -79,7 +84,11 @@ window.onload = function() {
                     throw("Invalid Direction");
             }
             this.body.unshift(nextPosition);
-            this.body.pop();
+            if(!this.ateApple) {
+                this.body.pop();
+            } else {
+                this.ateApple = false;
+            }
         };
         
         this.setDirection = function (newDirection) {
@@ -110,7 +119,7 @@ window.onload = function() {
             let snakeY = head[1];
             let minX = 0;
             let minY = 0;
-            let maxX = widthinBlocks -1;
+            let maxX = widthInBlocks -1;
             let maxY = heightInBlocks -1;
             let isNotBetweenHorizontalWalls = snakeX < minX || snakeX > maxX;
             let isNotBetweenVerticalWalls = snakeY < minY || snakeY > maxY;
@@ -128,14 +137,14 @@ window.onload = function() {
             return wallCollision || snakeCollision;
         };
 
-        this.isEatingApple(appleToEat) {
-            let head[0] = this.body[0];
+        this.isEatingApple = function(appleToEat) {
+            let head = this.body[0];
             if(head[0] === appleToEat.position[0] && head[1] === appleToEat.position[1]) {
                 return true;
             } else {
                 return false;
             }
-        }
+        };
     } 
 
     function Apple(position) {
@@ -145,11 +154,29 @@ window.onload = function() {
             ctx.fillStyle = "#33cc33";
             ctx.beginPath();
             let radius = blockSize / 2;
-            let x = position[0] * blockSize + radius;
-            let y = position[1] * blockSize + radius;
+            let x = this.position[0] * blockSize + radius;
+            let y = this.position[1] * blockSize + radius;
             ctx.arc(x, y, radius, 0, Math.PI*2, true);
             ctx.fill();
             ctx.restore();
+        };
+
+        this.setNewPosition = function() {
+            let newX = Math.random() * (widthInBlocks - 1);
+            let newY = Math.random() * (heightInBlocks - 1);
+            this.position = [newX, newY];
+        };
+
+        this.isOnSnake = function(snakeToCheck) {
+            let isOnSnake = false;
+
+            for(let i = 0; i > snakeToCheck.body.length; i++) {
+                if(this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1]) {
+                    isOnSnake = true;
+                }
+            }
+
+            return isOnSnake;
         };
     }
 
