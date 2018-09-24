@@ -62,12 +62,11 @@ window.onload = function() {
         ctx.lineWidth = 5;
         let centerX = canvasWidth / 2;
         let centerY = canvasHeight / 2;
-        ctx.fillText("Game Over", centerX, centerY - 180);
         ctx.strokeText("Game Over", centerX, centerY - 180);
-
+        ctx.fillText("Game Over", centerX, centerY - 180);
         ctx.font = "bold 30px sans-serif";
-        ctx.strokeText = 
-        ctx.fillText("Appuyez sur la touche espace pour rejouer!", 5, 30);
+        ctx.strokeText ("Appuyez sur la touche espace pour rejouer", centerX, centerY - 120);
+        ctx.fillText("Appuyez sur la touche espace pour rejouer!", centerX, centerY - 120);
         ctx.restore();
     }
 
@@ -75,6 +74,7 @@ window.onload = function() {
         snakee = new Snake([[6,4],[5,4],[4,4]], "right");
         applee = new Apple([10, 10]);
         score = 0;
+        clearTimeout(timeout);
         refreshCanvas();
     }
 
